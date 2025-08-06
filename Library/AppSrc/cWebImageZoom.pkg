@@ -1,0 +1,55 @@
+Use cWebBaseControl.pkg
+
+Enum_List
+    Define wizFit          for 0 // Will fit the image between the available width and height without cropping
+    Define wizCoverWidth   for 1 // Will cover the image between the available width and crop the height
+    Define wizCoverHeight  for 2 // Will cover the image between the available height and crop the sides
+    Define wizCoverSmart   for 3 // Chooses between wiCoverWidth or wiCoverHeight in a smart fashion
+End_Enum_List
+
+Class cWebImageZoom is a cWebBaseControl
+    
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        
+        // Review: Shouldn't this be together with pbFillHeight?
+        { WebProperty=Client } 
+        Property Integer piHeight 200                // Is the explicit fixed height of the control (for most controls you leave this set to 0 so the control's style settings determine the height). Ignored when pbFillHeight is True.
+        { WebProperty=Client } 
+        Property Integer piMinHeight 0               // Minimum control height (ignored unless pbFillHeight is True)       
+        { WebProperty=Client }
+        Property String psUrl ""
+
+        { WebProperty=Client }
+        Property Boolean pbShowBorder False
+        { WebProperty=Client }
+        {EnumList="wizCoverSmart, wizCoverWidth, wizCoverHeight, wizFit" }
+        Property Integer peImageFit wizFit
+        
+        Property String psLocalFile ""
+        
+        // WebSetting the values below will cause a full redraw of the canvas and image on the client, use sparingly.
+        { WebProperty=Client }
+        Property Boolean pbAllowTouchMove True          // Allow moving through touch events
+        { WebProperty=Client }
+        Property Boolean pbAllowTouchZoom True          // Allow zooming through touch events
+        { WebProperty=Client }
+        Property Boolean pbAllowMouseMove True          // Allow moving through mouse drag
+        { WebProperty=Client }
+        Property Boolean pbAllowMouseZoom True          // Allow zooming through mousewheel scroll
+        { WebProperty = Client }
+        Property Number pnMinZoom 0.1                   // Minimum allowed zoom scale
+        { WebProperty = Client }
+        Property Number pnMaxZoom 10                    // Maximum allowed zoom scale
+                
+                
+        Set pbShowLabel to False
+        Set psJSClass to "df.WebImageZoom"
+    End_Procedure
+
+    Procedure End_Construct_Object
+        Forward Send End_Construct_Object
+
+    End_Procedure
+
+End_Class

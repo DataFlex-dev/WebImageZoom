@@ -1,0 +1,11 @@
+[Properties]
+Version=24.0
+[WorkspacePaths]
+ConfigFile=.\Programs\Config.ws
+[Conditionals]
+Is$WebApp=True
+Is$Win64=True
+[Projects]
+Project0=WebApp.src
+[Libraries]
+Lib1=..\..\cWebImageZoom\cWebImageZoom_24_0.sws

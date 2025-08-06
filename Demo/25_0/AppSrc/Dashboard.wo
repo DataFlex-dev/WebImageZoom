@@ -1,0 +1,175 @@
+﻿Use cWebView.pkg
+Use cWebPanel.pkg
+Use cWebForm.pkg
+Use cWebButton.pkg
+Use cWebGroup.pkg
+Use cWebSpacer.pkg
+Use cWebHtmlBox.pkg
+Use cWebMenuGroup.pkg
+Use cWebMenuItem.pkg
+Use cWebLabel.pkg
+Use cWebList.pkg
+Use cWebColumn.pkg
+Use cWebImage.pkg
+Use cWebImageZoom.pkg
+Use cWebCombo.pkg
+
+Object oDashboard is a cWebView
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+    // Add a DDO Structure 
+    //
+    // There is no need to synchronize a DD structure on the client so we do
+    // not set the Server property or send ADDOStructure. We will simply use
+    // DDO's to mine data and generate HTML for our cWebHTMLBox objects.
+    // It is the HTML in these objects that is sent to the client each time 
+    // this page is shown.
+    //
+    // Also, it is important for the drill-down Navigation interface that we
+    // do not set the Server property to some DDO because this will affect 
+    // constraints in the next view that we navigate to.
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+    Set piMaxWidth to 1024
+    
+    Set psCaption to "Dashboard"
+    Set peViewType to vtUndefined
+    
+//    Set pbServerOnResizeWindow to True
+    Set pbServerOnShow to True
+    Set pbShowCaption to False
+    Set psCSSClass to "Dashboard"
+    
+    Object oWebMainPanel is a cWebPanel
+        Set piColumnCount to 24
+
+        Object oWebCombo1 is a cWebCombo
+            Set piColumnSpan to 12
+            Set psLabel to "Fit mode"
+            Set pbServerOnChange to True
+            Set psValue to "3"
+
+            Procedure OnFill
+                Forward Send OnFill
+                
+                Send AddComboItem 0 "wizCoverSmart"
+                Send AddComboItem 1 "wizCoverWidth"
+                Send AddComboItem 2 "wizCoverHeight"
+                Send AddComboItem 3 "wizFit"
+            End_Procedure
+
+            Procedure OnChange String sNewValue String sOldValue
+                Forward Send OnChange sNewValue sOldValue
+                
+                WebSet peImageFit of oWebImageZoom1 to sNewValue
+            End_Procedure
+        End_Object
+
+        Object oWebButton1 is a cWebButton
+            Set piColumnSpan to 12
+            Set psCaption to "Load image"
+            Set piColumnIndex to 12
+        
+            Procedure OnClick
+                String sFilePath sUrl
+                
+                Get GetDownloadFolderPath of ghoWebApp to sFilePath
+                Move (sFilePath + "Ivy.jpg") to sFilePath
+                
+                Get DownloadURL of ghoWebResourceManager sFilePath to sUrl
+                WebSet psUrl of oWebImageZoom1 to sUrl
+            End_Procedure
+        End_Object
+
+        Object oWebButton2 is a cWebButton
+            Set piColumnSpan to 12
+            Set psCaption to "Disable pbAllowMouseMove"
+        
+            Procedure OnClick
+                Boolean bAllow
+                
+                WebGet pbAllowMouseMove of oWebImageZoom1 to bAllow
+                WebSet pbAllowMouseMove of oWebImageZoom1 to (not(bAllow))
+                
+                Send SetBtnCaption (Self) "pbAllowMouseMove" bAllow
+            End_Procedure
+        End_Object
+
+        Object oWebButton3 is a cWebButton
+            Set piColumnSpan to 12
+            Set psCaption to "Disable pbAllowMouseZoom"
+            Set piColumnIndex to 12
+        
+            Procedure OnClick
+                Boolean bAllow
+                
+                WebGet pbAllowMouseZoom of oWebImageZoom1 to bAllow
+                WebSet pbAllowMouseZoom of oWebImageZoom1 to (not(bAllow))
+                
+                Send SetBtnCaption (Self) "pbAllowMouseZoom" bAllow
+            End_Procedure
+        End_Object
+        
+        Object oWebButton4 is a cWebButton
+            Set piColumnSpan to 12
+            Set psCaption to "Disable pbAllowTouchMove"
+        
+            Procedure OnClick
+                Boolean bAllow
+                
+                WebGet pbAllowTouchMove of oWebImageZoom1 to bAllow
+                WebSet pbAllowTouchMove of oWebImageZoom1 to (not(bAllow))
+                
+                Send SetBtnCaption (Self) "pbAllowTouchMove" bAllow
+            End_Procedure
+        End_Object
+        
+        Object oWebButton5 is a cWebButton
+            Set piColumnSpan to 12
+            Set piColumnIndex to 12
+            Set psCaption to "Disable pbAllowTouchZoom"
+        
+            Procedure OnClick
+                Boolean bAllow
+                
+                WebGet pbAllowTouchZoom of oWebImageZoom1 to bAllow
+                WebSet pbAllowTouchZoom of oWebImageZoom1 to (not(bAllow))
+                
+                Send SetBtnCaption (Self) "pbAllowTouchZoom" bAllow
+            End_Procedure
+        End_Object
+        
+        Procedure SetBtnCaption Handle hoControl String sProp Boolean bEnabled
+            If (bEnabled) Begin
+                WebSet psCaption of hoControl to ("Enable " + sProp) 
+            End
+            Else Begin
+                WebSet psCaption of hoControl to ("Disable " + sProp) 
+            End
+            
+        End_Procedure
+        
+        Object oWebImageZoom1 is a cWebImageZoom
+        
+            Set psUrl to ""
+            Set piColumnSpan to 0
+            Set pbFillHeight to True
+            Set pbShowBorder to True
+            Set psToolTip to "Click and move your mouse or scroll to zoom!"
+//            Set piHeight to 100
+        
+        End_Object
+        
+        // - - - - - - - - - - - - - - -
+        // Main Panel's Responsive Rules
+        // - - - - - - - - - - - - - - -
+        WebSetResponsive piColumnCount rmMobile to 1
+        WebSetResponsive piColumnCount rmTabletPortrait to 16
+    
+    End_Object
+    
+    Procedure OnShow
+        // Each time this view is shown we will update the appropriate information.
+    End_Procedure
+
+End_Object
